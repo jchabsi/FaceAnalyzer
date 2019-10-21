@@ -20,3 +20,11 @@ https://azure.microsoft.com/en-us/try/cognitive-services/
 
 https://azure.microsoft.com/en-us/free/
 
+## Agregar la subscription key
+
+Azure te proporcionará una Subscription Key y un Endpoint para poder utilizar Cognitive Services que los debes agregar al archivo de configuración __appsettings.json__. Por ejemplo:
+
+`{
+  "subscriptionKey": "EnterYourKeyHere",  
+  "faceEndpoint": "https://yourendpoint.com/"  
+}`
