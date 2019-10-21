@@ -1,0 +1,66 @@
+﻿@model FaceAnalyzer.Models.FaceAttributesViewModel
+@{
+    //Layout = null;
+    ViewData["Title"] = "Analysis";
+}
+
+<h1 class="display-4">Análisis</h1>
+<br/>
+<div class="row">
+    <div class="col-md-4 col-sm">
+        <div class="panel panel-default">
+            <div class="panel-heading">Fotografía:</div>
+            <div class="panel-body">
+                <div id="analysis">
+                    @{
+                        <br />
+                        <p><img src="@Url.Content(@Model.Image)" alt="img" /></p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm">
+        <div class="panel panel-default">
+            <div class="panel-heading">Resultado del análisis de la imagen:
+            <div class="panel-body">
+                <div id="analysis">
+                    <br />
+                    @{
+                        if (!String.IsNullOrEmpty(Model.Gender))
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Gender): @Model.Gender</p>
+                        }
+                        if (Model.Age != null)
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Age): @Model.Age</p>
+                        }
+                        if (!String.IsNullOrEmpty(Model.Gender) && Model.Gender == "Mujer")
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Makeup): @Model.Makeup</p>
+                        }
+                        if (!String.IsNullOrEmpty(Model.Gender) && Model.Gender == "Hombre")
+                        {
+                            <p>@Html.DisplayNameFor(model => model.FacialHair): @Model.FacialHair</p>
+                        }
+                        if (!String.IsNullOrEmpty(Model.Smile))
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Smile): @Model.Smile</p>
+                        }
+                        if (!String.IsNullOrEmpty(Model.Glasses))
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Glasses): @Model.Glasses</p>
+                        }
+                        if (!String.IsNullOrEmpty(Model.Hair))
+                        {
+                            <p>@Html.DisplayNameFor(model => model.Hair): @Model.Hair</p>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm"></div>
+    </div>
+
+

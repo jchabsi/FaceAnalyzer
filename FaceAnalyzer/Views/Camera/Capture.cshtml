@@ -1,0 +1,72 @@
+﻿@{
+    //Layout = null;
+    ViewData["Title"] = "Camera";
+}
+
+<h1 class="display-4">Cámara</h1>
+<br />
+<div class="row">
+    <div class="col-md-4 col-sm">
+        <div class="panel panel-default">
+            <div class="panel-heading">Cámara</div>
+            <div class="panel-body">
+                <div id="my_camera"></div>
+                <!-- A button for taking snaps -->
+                <br />
+                <form>
+                    <input type="button" class="btn btn-primary" value="Sacar Foto" onClick="take_snapshot()">
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm">
+        <div class="panel panel-default">
+            <div class="panel-heading">Foto</div>
+            <div class="panel-body">
+                <div id="results"></div>
+            </div>
+            <br />
+            <div id="analysis" style="display:none">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a type="button" class="btn btn-primary" asp-area="" asp-controller="Camera" asp-action="Analysis">Analisis</a>
+                    </li>
+                </ul>
+            </div>
+            <br />
+        </div>
+    </div>    
+    
+    <div class="col-md-2">    </div>
+    <!-- First, include the Webcam.js JavaScript Library -->
+    <script src="~/webcamjs/webcam.js"></script>
+    <!-- Configure a few settings and attach camera -->
+    <script language="JavaScript">
+        Webcam.set({
+            width: 320,
+            height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#my_camera');
+    </script>
+
+    <!-- Code to handle taking the snapshot and displaying it locally -->
+    <script language="JavaScript">
+        function take_snapshot() {
+            // take snapshot and get image data
+            Webcam.snap(function (data_uri) {
+                // display results in page
+                document.getElementById('results').innerHTML =
+                    '<img src="' +
+                    data_uri +
+                    '"/>';
+                document.getElementById('analysis').style.display = 'block';
+
+                Webcam.upload(data_uri,
+                    '/Camera/Capture',
+                    function (code, text) {
+                    });
+            });
+        }
+    </script>
