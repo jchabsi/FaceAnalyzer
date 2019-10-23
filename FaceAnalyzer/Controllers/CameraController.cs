@@ -12,12 +12,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace FaceAnalyzer.Controllers
 {
+    [Route("Camera")]
     public class CameraController : Controller
     {
         private readonly IWebHostEnvironment Environment;
-        private readonly IConfiguration Config; 
-
-        private FaceAttributesViewModel FaceAttributes;
+        private readonly IConfiguration Config;                
 
         public CameraController(IWebHostEnvironment env, IConfiguration configuration)
         {
@@ -26,20 +25,21 @@ namespace FaceAnalyzer.Controllers
         }
 
         [HttpGet]
-        public IActionResult Capture()
+        [Route("Capture")]
+        public IActionResult GetCapture()
         {
-            return View();
+            return View("Capture");            
         }
 
         [HttpPost]
-        public IActionResult Capture(string name)
+        [Route("Capture")]
+        public IActionResult PostCapture(string name)
         {
             try
             {
                 var files = HttpContext.Request.Form.Files;
                 if (files != null)
-                {
-                    FaceAttributes = null; ;
+                {                    
                     foreach (var file in files)
                     {                        
                         if (file.Length > 0)
@@ -82,36 +82,54 @@ namespace FaceAnalyzer.Controllers
         }
 
         [HttpGet]
-        public IActionResult ShowAnalysis(FaceAttributesViewModel faceAttributes)
-        {
-            return View("Analysis", faceAttributes);
-        }
-
-        [HttpGet]
+        [Route("Analysis")]
         public IActionResult Analysis()
         {
             string fileName = TempData["file"].ToString();
 
             string webFile = "~/CameraPhotos" + $@"/{fileName}";
             string filePath = Path.Combine(Environment.WebRootPath, "CameraPhotos") + $@"\{fileName}";
-
-            DetectFace detector = new DetectFace(filePath, Config);
-            var detectorTask = detector.Run();
-            var faceList = detectorTask.Result;
-
-            FaceAttributes = new FaceAttributesViewModel
+            
+            FaceAttributesViewModel FaceAttributes = null;
+            try
             {
-                Age = faceList[0].FaceAttributes.Age,
-                Gender = faceList[0].FaceAttributes.Gender.ToString().ToLower() == "male" ? "Hombre" : "Mujer",
-                Makeup = faceList[0].FaceAttributes.Makeup.LipMakeup || faceList[0].FaceAttributes.Makeup.EyeMakeup ? "Si" : "No",
-                FacialHair = ((faceList[0].FaceAttributes.FacialHair.Beard > 0) ||
-                             (faceList[0].FaceAttributes.FacialHair.Moustache > 0) ||
-                             (faceList[0].FaceAttributes.FacialHair.Sideburns > 0)) ? "Si" : "No",
-                Glasses = faceList[0].FaceAttributes.Glasses.ToString(),
-                Smile = faceList[0].FaceAttributes.Smile > 0.2 ? "Si" : "No",
-                Image = webFile,
-                Hair = faceList[0].FaceAttributes.Hair.HairColor[0].Color.ToString()
-            };
+
+                DetectFace detector = new DetectFace(filePath, Config);
+                var detectorTask = detector.Run();
+                var faceList = detectorTask.Result;
+
+                if (faceList.Count() > 0)
+                {
+                    FaceAttributes = new FaceAttributesViewModel
+                    {
+                        Age = faceList[0].FaceAttributes.Age,
+                        Gender = faceList[0].FaceAttributes.Gender.ToString().ToLower() == "male" ? "Hombre" : "Mujer",
+                        Makeup = faceList[0].FaceAttributes.Makeup.LipMakeup || faceList[0].FaceAttributes.Makeup.EyeMakeup ? "Si" : "No",
+                        FacialHair = ((faceList[0].FaceAttributes.FacialHair.Beard > 0) ||
+                                 (faceList[0].FaceAttributes.FacialHair.Moustache > 0) ||
+                                 (faceList[0].FaceAttributes.FacialHair.Sideburns > 0)) ? "Si" : "No",
+                        Glasses = faceList[0].FaceAttributes.Glasses.ToString(),
+                        Smile = faceList[0].FaceAttributes.Smile > 0.2 ? "Si" : "No",
+                        Image = webFile,
+                        Hair = faceList[0].FaceAttributes.Hair.HairColor[0].Color.ToString()
+                    };
+                }
+                else
+                {
+                    FaceAttributes = new FaceAttributesViewModel
+                    {
+                        Image = webFile,
+                        Age = -1
+                    };
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+             
+
+
 
 
             ////Testing data
@@ -130,11 +148,7 @@ namespace FaceAnalyzer.Controllers
             return View(FaceAttributes);
 
         }
-        /// <summary>
-        /// Saving captured image into Folder.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="fileName"></param>
+
         private void StoreInFolder(IFormFile file, string fileName)
         {
             using (FileStream fs = System.IO.File.Create(fileName))

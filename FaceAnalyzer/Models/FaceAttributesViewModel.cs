@@ -18,7 +18,7 @@ namespace FaceAnalyzer.Models
         [Display(Name = "Maquillaje")]
         public string Makeup { get; set; }
 
-        [Display(Name = "Bello facial")]
+        [Display(Name = "Barba")]
         public string FacialHair { get; set; }
 
         [Display(Name = "Anteojos")]
