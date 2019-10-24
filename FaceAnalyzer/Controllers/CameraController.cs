@@ -90,49 +90,51 @@ namespace FaceAnalyzer.Controllers
             string webFile = "~/CameraPhotos" + $@"/{fileName}";
             string filePath = Path.Combine(Environment.WebRootPath, "CameraPhotos") + $@"\{fileName}";
             
-            FaceAttributesViewModel FaceAttributes = null;
+            FaceAttributesViewModel faceAttributes = null;
+            IList<FaceAttributesViewModel> listOfFaces = new List<FaceAttributesViewModel>();
             try
             {
 
                 DetectFace detector = new DetectFace(filePath, Config);
                 var detectorTask = detector.Run();
-                var faceList = detectorTask.Result;
+                var csFaceList = detectorTask.Result;                
 
-                if (faceList.Count() > 0)
+                if (csFaceList.Count() > 0)
                 {
-                    FaceAttributes = new FaceAttributesViewModel
+                    foreach ( var face in csFaceList)
                     {
-                        Age = faceList[0].FaceAttributes.Age,
-                        Gender = faceList[0].FaceAttributes.Gender.ToString().ToLower() == "male" ? "Hombre" : "Mujer",
-                        Makeup = faceList[0].FaceAttributes.Makeup.LipMakeup || faceList[0].FaceAttributes.Makeup.EyeMakeup ? "Si" : "No",
-                        FacialHair = ((faceList[0].FaceAttributes.FacialHair.Beard > 0) ||
-                                 (faceList[0].FaceAttributes.FacialHair.Moustache > 0) ||
-                                 (faceList[0].FaceAttributes.FacialHair.Sideburns > 0)) ? "Si" : "No",
-                        Glasses = faceList[0].FaceAttributes.Glasses.ToString(),
-                        Smile = faceList[0].FaceAttributes.Smile > 0.2 ? "Si" : "No",
-                        Image = webFile,
-                        Hair = faceList[0].FaceAttributes.Hair.HairColor[0].Color.ToString()
-                    };
+                        faceAttributes = new FaceAttributesViewModel
+                        {
+                            Age = face.FaceAttributes.Age,
+                            Gender = face.FaceAttributes.Gender.ToString().ToLower() == "male" ? "Hombre" : "Mujer",
+                            Makeup = face.FaceAttributes.Makeup.LipMakeup || csFaceList[0].FaceAttributes.Makeup.EyeMakeup ? "Si" : "No",
+                            FacialHair = ((face.FaceAttributes.FacialHair.Beard > 0) ||
+                                            (face.FaceAttributes.FacialHair.Moustache > 0) ||
+                                            (face.FaceAttributes.FacialHair.Sideburns > 0)) ? "Si" : "No",
+                            Glasses = face.FaceAttributes.Glasses.ToString(),
+                            Smile = face.FaceAttributes.Smile > 0.2 ? "Si" : "No",
+                            Image = webFile,
+                            Hair = face.FaceAttributes.Hair.HairColor[0].Color.ToString()
+                        };
+                        listOfFaces.Add(faceAttributes);
+                    }                    
                 }
                 else
                 {
-                    FaceAttributes = new FaceAttributesViewModel
+                    faceAttributes = new FaceAttributesViewModel
                     {
                         Image = webFile,
                         Age = -1
                     };
+                    listOfFaces.Add(faceAttributes);
                 }
             }
             catch (Exception)
             {
                 throw;
             }
-             
-
-
-
-
-            ////Testing data
+            
+            ////Data for testing the view if you don't want to call CS
             //faceAttributes = new FaceAttributesViewModel
             //{
             //    Age = 43,
@@ -144,8 +146,9 @@ namespace FaceAnalyzer.Controllers
             //    Hair = "Brown",
             //    Image = webFile
             //};
+            //listOfFaces.Add(faceAttributes);
 
-            return View(FaceAttributes);
+            return View(listOfFaces);
 
         }
 

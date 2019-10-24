@@ -51,12 +51,8 @@ namespace FaceAnalyzer.Services
 
             try
             {
-                using (Stream imageStream = File.OpenRead(imagePath))
-                {
-                    faceList = await faceClient.Face.DetectWithStreamAsync(
-                                imageStream, true, false, faceAttributes);
-                                        
-                }
+                using Stream imageStream = File.OpenRead(imagePath);
+                faceList = await faceClient.Face.DetectWithStreamAsync(imageStream, true, false, faceAttributes);
             }
             catch (APIErrorException e)
             {

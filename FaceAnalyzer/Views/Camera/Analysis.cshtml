@@ -1,4 +1,4 @@
-﻿@model FaceAnalyzer.Models.FaceAttributesViewModel
+﻿@model List<FaceAnalyzer.Models.FaceAttributesViewModel>
 @{
     //Layout = null;
     ViewData["Title"] = "Analysis";
@@ -14,7 +14,7 @@
                 <div id="analysis">
                     @{
                         <br />
-                        <p><img src="@Url.Content(@Model.Image)" alt="img" /></p>
+                        <p><img src="@Url.Content(@Model[0].Image)" alt="img" /></p>
                     }
                 </div>
             </div>
@@ -27,43 +27,47 @@
                 <div id="analysis">
                     <br />
                     @{
-                        if (Model.Age == -1)
+                        foreach (var face in Model)
                         {
-                            <p><b>No se ha detectado ningún rostro en la imagen.</b></p>
-                            <p><b>Intenta sacar otra foto.</b></p>
+                            if (face.Age == -1)
+                            {
+                                <p><b>No se ha detectado ningún rostro en la imagen.</b></p>
+                                <p><b>Intenta sacar otra foto.</b></p>
+                            }
+                            else
+                            {
+                                if (!String.IsNullOrEmpty(face.Gender))
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].Gender): <b>@face.Gender</b></p>
+                                }
+                                if (face.Age != null)
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].Age): <b>@face.Age</b></p>
+                                }
+                                if (!String.IsNullOrEmpty(face.Gender) && face.Gender == "Mujer")
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].Makeup): <b>@face.Makeup</b></p>
+                                }
+                                if (!String.IsNullOrEmpty(face.Gender) && face.Gender == "Hombre")
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].FacialHair): <b>@face.FacialHair</b></p>
+                                }
+                                if (!String.IsNullOrEmpty(face.Smile))
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].Smile): <b>@face.Smile</b></p>
+                                }
+                                if (!String.IsNullOrEmpty(face.Glasses))
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].Glasses): <b>@face.Glasses</b></p>
+                                }
+                                if (!String.IsNullOrEmpty(face.Hair))
+                                {
+                                    <p>@Html.DisplayNameFor(model => model[0].Hair): <b>@face.Hair</b></p>
+                                }
+                                <br />
+                            }
                         }
-                        else
-                        {
-                            if (!String.IsNullOrEmpty(Model.Gender))
-                            {
-                                <p>@Html.DisplayNameFor(model => model.Gender): <b>@Model.Gender</b></p>
-                            }
-                            if (Model.Age != null)
-                            {
-                                <p>@Html.DisplayNameFor(model => model.Age): <b>@Model.Age</b></p>
-                            }
-                            if (!String.IsNullOrEmpty(Model.Gender) && Model.Gender == "Mujer")
-                            {
-                                <p>@Html.DisplayNameFor(model => model.Makeup): <b>@Model.Makeup</b></p>
-                            }
-                            if (!String.IsNullOrEmpty(Model.Gender) && Model.Gender == "Hombre")
-                            {
-                                <p>@Html.DisplayNameFor(model => model.FacialHair): <b>@Model.FacialHair</b></p>
-                            }
-                            if (!String.IsNullOrEmpty(Model.Smile))
-                            {
-                                <p>@Html.DisplayNameFor(model => model.Smile): <b>@Model.Smile</b></p>
-                            }
-                            if (!String.IsNullOrEmpty(Model.Glasses))
-                            {
-                                <p>@Html.DisplayNameFor(model => model.Glasses): <b>@Model.Glasses</b></p>
-                            }
-                            if (!String.IsNullOrEmpty(Model.Hair))
-                            {
-                                <p>@Html.DisplayNameFor(model => model.Hair): <b>@Model.Hair</b></p>
-                            }
-                        }
-                    }
+                    }                
                 </div>
             </div>
         </div>
