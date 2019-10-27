@@ -107,7 +107,7 @@ namespace FaceAnalyzer.Controllers
                         {
                             Age = face.FaceAttributes.Age,
                             Gender = face.FaceAttributes.Gender.ToString().ToLower() == "male" ? "Hombre" : "Mujer",
-                            Makeup = face.FaceAttributes.Makeup.LipMakeup || csFaceList[0].FaceAttributes.Makeup.EyeMakeup ? "Si" : "No",
+                            Makeup = face.FaceAttributes.Makeup.LipMakeup || face.FaceAttributes.Makeup.EyeMakeup ? "Si" : "No",
                             FacialHair = ((face.FaceAttributes.FacialHair.Beard > 0) ||
                                             (face.FaceAttributes.FacialHair.Moustache > 0) ||
                                             (face.FaceAttributes.FacialHair.Sideburns > 0)) ? "Si" : "No",
